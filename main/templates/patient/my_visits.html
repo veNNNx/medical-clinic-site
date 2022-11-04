@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+
+{% block title %} My visits {% endblock %}
+
+{% block content %} 
+<h1> My visit</h1>
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success alert-dismissible" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif%}
+
+{%if next_visits %}
+    <h1>Incoming visits</h1>
+    {% for visit in next_visits%}
+        <div> 
+        {{visit.doctor.first_name}} {{visit.doctor.last_name}} {{visit.date}} {{visit.minutes}} {{visit.time}}
+        </div>
+    {%endfor%}
+{% endif %}
+
+{%if today_visits %}
+    <h1>Today</h1>
+    {% for visit in today_visits%}
+        <div> 
+        {{visit.doctor.first_name}} {{visit.doctor.last_name}} {{visit.date}} {{visit.minutes}} {{visit.time}}
+        </div>
+    {%endfor%}
+{% endif %}
+
+
+{%if past_visits %}
+    <h1>Past visits</h1>
+    {% for visit in past_visits%}
+        <div> 
+        {{visit.doctor.first_name}} {{visit.doctor.last_name}} {{visit.date}} {{visit.minutes}} {{visit.time}}
+        </div>
+    {%endfor%}
+{% endif %}
+
+<br/>
+
+
+
+
+
+
+{% for visit in visits%}
+<div> 
+{{visit.doctor.first_name}} {{visit.doctor.last_name}} {{visit.date}} {{visit.hours}}:{{visit.minutes}} {{visit.time}}
+</div>
+{%endfor%}
+
+<a class="btn btn-success" href="/new-visit" >Add new visit!</a>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+
+{% block title %} Advertisements {% endblock %}
+
+{% block content %} 
+<h1></h1>
+
+{% for post in all_posts%}
+<div class ='card mt-2'>
+    <div class="card-body ">
+        <h4 class="card-title" style="align-items: center;"><strong>{{post.title}}</strong></h5>
+        <h6 class="card-text"c >{{post.text}}</h6>
+    </div>
+    <div class="card-footer text-muted d-flex flex-row justify-content-between">{{post.date_created}}
+        {% if perms.main.delete_post %}
+        <div>
+            <form method = 'post'>
+                {% csrf_token %}
+                <button type="'submit" class="btn btn-danger" name="detele_post_id" value="{{post.id}}">Delete</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endfor %}
+
+
+{% endblock %}

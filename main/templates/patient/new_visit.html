@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %} Select Doctor {% endblock %}
+
+
+{% block content %} 
+<h1>Select Doctor!</h1>
+<form method="post">
+    {% csrf_token %}
+    <label for="doctors">Choose doctor:</label>
+    {%for doctor in doctors%}
+    {% for profile in profiles %}
+    {% if profile.user_id == doctor.id%}
+    <div class="row">
+        <div clas="column" style="float:left;width:15%;">
+            <a href="new-visit/{{doctor.id}}">
+                <img class="rounded-circle mt-5" style="width:135px; height:150px" src="{{profile.img.url}}">         
+            </a>
+        </div>
+        <div clas="column" style="float:left;width:15%;">
+            {{profile.spec}} </br>
+            {{doctor.first_name}} {{doctor.last_name}} 
+        </div>
+        <div class="column" style="float:right; width:50%;"> 
+            {{profile.desc}} 
+        </div>
+    </div>
+    {% endif %} 
+    {% endfor %}
+    {%endfor%}
+</form>
+        
+{% endblock %}
+

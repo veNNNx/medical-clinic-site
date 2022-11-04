@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %} Schedule {% endblock %}
+
+{% block content %} 
+
+
+<h1>Schedule {%if date%} at {{date}}{%endif%}</h1>
+<form method="post">
+        {% csrf_token %}
+<label>Select date:</label>
+<input type="date" id = 'date', name = 'date'
+max="2032-01-01">
+
+    <button type="'submit" class="btn btn-success">Go to date</button>
+
+</form>
+<script>
+    var date = new Date();
+    var currentDate = date.toISOString().slice(0,10);
+    
+    document.getElementById('date').value = currentDate;
+    document.getElementById('date').min = currentDate;
+        </script>
+
+{% for visit in visits%}
+<div> 
+{% if default %} {{visit.date}} {%endif%} 
+{{visit.time}} 
+<a href="profile/{{visit.user_id.id}}">
+{{visit.user_id.first_name}} {{visit.user_id.last_name}} 
+</a>
+</div>
+{%endfor%}
+
+
+
+
+{% endblock %}

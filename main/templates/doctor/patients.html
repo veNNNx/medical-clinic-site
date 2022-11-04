@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %} Patients {% endblock %}
+
+{% block content %} 
+    <h1> Patients</h1>
+    <u>
+        {% for user in users %}
+        <li>
+        <a href="profile/{{user.id}}">{{user.first_name}} {{user.last_name}}</a>, {{user.email}}
+        </li>
+        {%endfor%}
+    </u>
+{% endblock %}
