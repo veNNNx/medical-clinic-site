@@ -26,8 +26,8 @@ max="2032-01-01">
 <div> 
 {% if default %} {{visit.date}} {%endif%} 
 {{visit.time}} 
-<a href="profile/{{visit.user_id.id}}">
-{{visit.user_id.first_name}} {{visit.user_id.last_name}} 
+<a href="profile/{{visit.user.id}}">
+{{visit.user.first_name}} {{visit.user.last_name}} 
 </a>
 </div>
 {%endfor%}

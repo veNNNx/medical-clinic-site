@@ -20,7 +20,7 @@
       <li class="nav-item">
         <a class="nav-link" href="/advertisements">Advertisements</a>
       </li>
-        {% if perms.main.delete_post %}
+        {% if user.profile_user.all.0.is_doctor %}
           <li class="nav-item">
             <a class="nav-link" href="/create-post">Create Post</a>
           </li>
@@ -49,8 +49,9 @@
     </ul>
 
 
-
+    <div class="content">
     {% block content %} {% endblock %}
+    </div>
     
   </body>
 </html>

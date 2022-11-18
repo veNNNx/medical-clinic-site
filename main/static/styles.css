@@ -4,3 +4,10 @@
   padding: 10px;
   font-size: 25px;
 }
+
+.content{
+  border: 1px solid;
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
