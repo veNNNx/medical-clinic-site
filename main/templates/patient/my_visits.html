@@ -4,7 +4,6 @@
 {% block title %} My visits {% endblock %}
 
 {% block content %} 
-<h1> My visit</h1>
 {% if messages %}
     {% for message in messages %}
         <div class="alert alert-success alert-dismissible" role="alert">
@@ -14,26 +13,42 @@
 {% endif%}
 
 {%if next_visits %}
-    <h1>Incoming visits</h1>
+    <h2>Incoming visits</h2>
     {% for visit in next_visits%}
-        <div> 
-        {{visit.doctor.first_name}} {{visit.doctor.last_name}} {{visit.date}} {{visit.minutes}} {{visit.time}}
+        <div class ="row"> 
+            <div class="col">
+                {{visit.doctor.first_name}} {{visit.doctor.last_name}} {{visit.date}} {{visit.minutes}} {{visit.time}}
+            </div>
+            <div class="col">
+                <form action = "/delete/visit/{{visit.id}}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" style="color:grey; float: right;">Delete</button>
+                </form>
+            </div>
         </div>
     {%endfor%}
 {% endif %}
 
 {%if today_visits %}
-    <h1>Today</h1>
+    <h2>Today</h2>
     {% for visit in today_visits%}
-        <div> 
-        {{visit.doctor.first_name}} {{visit.doctor.last_name}} {{visit.date}} {{visit.minutes}} {{visit.time}}
+        <div class="row">
+            <div class="col">
+                {{visit.doctor.first_name}} {{visit.doctor.last_name}} {{visit.date}} {{visit.minutes}} {{visit.time}}
+            </div>
+            <div class="col">
+                <form action="/delete/visit/{{visit.id}}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" style="color:grey; float: right;">Delete</button>
+                </form>
+            </div>
         </div>
     {%endfor%}
 {% endif %}
 
 
 {%if past_visits %}
-    <h1>Past visits</h1>
+    <h2>Past visits</h2>
     {% for visit in past_visits%}
         <div> 
         {{visit.doctor.first_name}} {{visit.doctor.last_name}} {{visit.date}} {{visit.minutes}} {{visit.time}}

@@ -141,6 +141,18 @@ def my_visits(request):
 
 
 @login_required(login_url='home.html')
+def delete_visit(request, id):
+    visit = Visit.objects.get(id=id)
+    if visit:
+        if request.user == visit.user:
+            visit.delete()
+            messages.success(request, 'Visit deleted')
+    else:
+        messages.error(request, 'There was a problem deleting a visit')
+    return redirect('/my-visits')
+
+
+@login_required(login_url='home.html')
 def new_visit(request):
     # doctors = User.objects.filter(groups__name='Doctor_perm')
     profiles = Profile.objects.filter(is_doctor=True)
