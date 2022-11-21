@@ -107,21 +107,32 @@ def schedule(request):
 
 @login_required(login_url='home.html')
 def my_profile(request):
+    print(request.POST)
     profile = Profile.objects.get(user=request.user)
     if request.method == 'POST':
-        profile.tel = request.POST.get('tel')
-        if profile.is_doctor:
+        data = request.POST
+        if data.get('email') != '':
             user = User.objects.get(id=request.user.id)
-            user.email = request.POST.get('email')
-            profile.spec = request.POST.get('spec')
-            profile.desc = request.POST.get('desc')
+            user.email = data.get('email')
             user.save()
+
+        profile.tel = data.get('tel') if data.get('tel') != '' else profile.tel
+
+        if profile.is_doctor:
+            profile.spec = data.get('spec') if data.get(
+                'spec') != '' else profile.spec
+            profile.desc = data.get('desc') if data.get(
+                'desc') != '' else profile.desc
         else:
-            profile.pesel = request.POST.get('pesel')
-            profile.city = request.POST.get('city')
-            profile.zip_code = request.POST.get('zip_code')
-            profile.street = request.POST.get('street')
-            profile.addr_number = request.POST.get('addr_number')
+            profile.pesel = data.get('pesel') if data.get(
+                'pesel') != '' else profile.pesel
+            profile.city = data.get('city') if data.get(
+                'city') != '' else profile.city
+            profile.zip_code = data.get('zip_code') if data.get(
+                'zip_code') != '' else profile.zip_code
+            profile.street = data.get('street') if data.get(
+                'street') != '' else profile.street
+            profile.addr_number = data.get('addr_number')
         profile.save()
         messages.success(request, 'Profile updated!')
         return redirect('/my-profile')

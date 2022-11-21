@@ -6,7 +6,6 @@
 <h1>Select Doctor!</h1>
 <form method="post">
     {% csrf_token %}
-    <label for="doctors">Choose doctor:</label>
     {%for doctor in doctors%}
     {% for profile in profiles %}
     {% if profile.user_id == doctor.id%}
