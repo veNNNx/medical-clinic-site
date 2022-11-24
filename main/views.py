@@ -11,10 +11,6 @@ import json
 
 
 def home(request):
-    return render(request, 'home.html',)
-
-
-def advertisements(request):
     all_posts = Post.objects.order_by('-date_created')
     if request.method == 'POST':
         post_id = request.POST.get('detele_post_id')

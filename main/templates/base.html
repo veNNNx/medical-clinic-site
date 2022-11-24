@@ -17,9 +17,6 @@
         <a class="nav-link" href="/">Home</a>
       </li>
       {% if user.is_authenticated%}
-      <li class="nav-item">
-        <a class="nav-link" href="/advertisements">Advertisements</a>
-      </li>
         {% if user.profile_user.all.0.is_doctor %}
           <li class="nav-item">
             <a class="nav-link" href="/create-post">Create Post</a>
