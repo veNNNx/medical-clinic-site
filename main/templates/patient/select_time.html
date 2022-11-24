@@ -63,6 +63,12 @@ label {
         document.getElementById(booked_list[i]).disabled=true;
         document.getElementById(booked_list[i]).style.color='red'
 	}
+
+    var weekend = {{ weekend| safe }}
+    for (var i = 0; i < weekend.length; i++) {
+        document.getElementById(weekend[i]).disabled = true;
+        document.getElementById(weekend[i]).style.color = 'grey'
+    }
     
 </script>
 

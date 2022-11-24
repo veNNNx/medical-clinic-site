@@ -18,7 +18,7 @@ def home(request):
         if post:
             post.delete()
 
-    return render(request, 'advertisements.html', {'all_posts': all_posts})
+    return render(request, 'home.html', {'all_posts': all_posts})
 
 
 def sign_up(request):
@@ -103,7 +103,6 @@ def schedule(request):
 
 @login_required(login_url='home.html')
 def my_profile(request):
-    print(request.POST)
     profile = Profile.objects.get(user=request.user)
     if request.method == 'POST':
         data = request.POST
@@ -194,7 +193,6 @@ def select_time(request, id):
         request.POST['date'] = date
         request.POST._mutable = _mutable
         form = VisitForm(request.POST)
-        print(request.POST)
         if form.is_valid():
             visit = form.save()
             messages.success(request, 'Visit booked succesfullty!')
@@ -202,18 +200,43 @@ def select_time(request, id):
     elif request.method == 'GET':
         visits = Visit.objects.filter(
             doctor=doctor, date__gte=datetime.datetime.today())
-        booked_time = []
-        for vis in visits:
-            vis.time = vis.time.strftime('%H:%M')
-            booked_time.append(f'{vis.date}{vis.time}')
+
+        booked_time, weekend = get_booked_time(visits)
 
         working_time = WORKING_TIME.copy()
+
         title = [(datetime.datetime.today() + datetime.timedelta(days=i)
                   ).strftime('%A %Y-%m-%d') for i in range(7)]
         date = [(datetime.datetime.today() + datetime.timedelta(days=i)
                  ).strftime('%Y-%m-%d') for i in range(7)]
-        return render(request, 'patient/select_time.html', {'visits': visits, 'working_time': working_time, 'title': title, 'date': date, 'booked_time': booked_time})
+
+        context = {'visits': visits,
+                   'working_time': working_time,
+                   'title': title,
+                   'date': date,
+                   'booked_time': booked_time,
+                   'weekend': weekend}
+
+        return render(request, 'patient/select_time.html', context)
     return redirect('/new-visit')
+
+
+def get_booked_time(visits):
+    booked_time = []
+    weekday = []
+    weekend = []
+    for vis in visits:
+        vis.time = vis.time.strftime('%H:%M')
+        booked_time.append(f'{vis.date}{vis.time}')
+    days = [(datetime.datetime.today() + datetime.timedelta(days=i)
+             )for i in range(7)]
+    for day in days:
+        if day.weekday() > 4:
+            weekday.append(day.strftime('%Y-%m-%d'))
+    for day in weekday:
+        for t in WORKING_TIME:
+            weekend.append(f'{day}{t}')
+    return booked_time, weekend
 
 
 WORKING_TIME = ['08:00', '08:30',
