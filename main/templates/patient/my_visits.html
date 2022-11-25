@@ -17,7 +17,7 @@
     {% for visit in next_visits%}
         <div class ="row"> 
             <div class="col">
-                {{visit.doctor.first_name}} {{visit.doctor.last_name}} {{visit.date}} {{visit.minutes}} {{visit.time}}
+                <a href="doctor/{{visit.doctor.id}}">{{visit.doctor.first_name}} {{visit.doctor.last_name}}</a> {{visit.date}} {{visit.minutes}} {{visit.time}}
             </div>
             <div class="col">
                 <form action = "/delete/visit/{{visit.id}}" method="post">
@@ -34,7 +34,7 @@
     {% for visit in today_visits%}
         <div class="row">
             <div class="col">
-                {{visit.doctor.first_name}} {{visit.doctor.last_name}} {{visit.date}} {{visit.minutes}} {{visit.time}}
+                <a href="doctor/{{visit.doctor.id}}">{{visit.doctor.first_name}} {{visit.doctor.last_name}}</a> {{visit.date}} {{visit.minutes}} {{visit.time}}
             </div>
             <div class="col">
                 <form action="/delete/visit/{{visit.id}}" method="post">
@@ -51,23 +51,13 @@
     <h2>Past visits</h2>
     {% for visit in past_visits%}
         <div> 
-        {{visit.doctor.first_name}} {{visit.doctor.last_name}} {{visit.date}} {{visit.minutes}} {{visit.time}}
+        <a href="doctor/{{visit.doctor.id}}">{{visit.doctor.first_name}} {{visit.doctor.last_name}}</a> {{visit.date}} {{visit.minutes}} {{visit.time}}
         </div>
     {%endfor%}
 {% endif %}
 
-<br/>
+</br>
 
-
-
-
-
-
-{% for visit in visits%}
-<div> 
-{{visit.doctor.first_name}} {{visit.doctor.last_name}} {{visit.date}} {{visit.hours}}:{{visit.minutes}} {{visit.time}}
-</div>
-{%endfor%}
 
 <a class="btn btn-success" href="/new-visit" >Add new visit!</a>
 {% endblock %}

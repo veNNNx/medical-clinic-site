@@ -46,3 +46,25 @@ class Profile(models.Model):
 
     def __str__(self):
         return str(self.user_id) + ' ' + str(self.user.first_name) + ' ' + str(self.user.last_name) + ' ' + str(self.is_doctor)
+
+
+class Chat(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='chat_patient')
+    doctor = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='chat_doctor')
+
+    def __str__(self):
+        return str(self.user.id) + ' ' + str(self.doctor.id) + ' chat'
+
+
+class Message(models.Model):
+    chat = models.ForeignKey(
+        Chat, on_delete=models.CASCADE, related_name='msg_chat')
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='msg_author')
+    date_created = models.DateTimeField(auto_now_add=True)
+    text = models.TextField(blank=True)
+
+    def __str__(self):
+        return str(self.author.id) + ' ' + self.text

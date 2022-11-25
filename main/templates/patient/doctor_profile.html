@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %} {{doctor.first_name}} {{doctor.last_name}} profile {% endblock %}
+
+{% block content %}
+
+<h1>{{doctor.first_name}} {{doctor.last_name}}</h1>
+<h2>{{profile.spec}}</h2>
+<p>E-mail: {{doctor.email}}</p>
+<p>doctor Id: {{doctor.id}}</p>
+<div class="row">
+    <div clas="column" style="float:left;width:15%;">
+        <img class="rounded-circle mt-5" style="width:150px; height:150px" src="{{profile.img.url}}">
+    </div>
+    <div class="column" style="float:right; width:50%;">
+        {{profile.desc}}
+    </div>
+</div>
+{% for visit in my_visits%}
+<div>
+    {{visit.date}} {{visit.time}}
+</div>
+{%endfor%}
+
+
+{% endblock %}

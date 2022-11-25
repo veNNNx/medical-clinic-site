@@ -9,6 +9,8 @@ import datetime
 import json
 # Create your views here.
 
+# region FOR ALL
+
 
 def home(request):
     all_posts = Post.objects.order_by('-date_created')
@@ -34,6 +36,7 @@ def sign_up(request):
         form = RegisterForm()
 
     return render(request, 'registration/sign_up.html', {'form': form})
+# endregion
 
 # region DOCTOR
 
@@ -43,9 +46,9 @@ def is_doctor(user):
     return profile.is_doctor
 
 
-@login_required(login_url='home.html')
 @user_passes_test(is_doctor)
-def profile(request, id):
+@login_required(login_url='home.html')
+def patient_profile(request, id):
     user = User.objects.get(id=id)
     profile = Profile.objects.get(user=user)
 
@@ -54,7 +57,7 @@ def profile(request, id):
     past_visits = Visit.objects.filter(user=user,
                                        date__lt=datetime.datetime.today()).order_by('-date', '-time')
 
-    return render(request, 'doctor/profile.html', {'user': user, 'profile': profile, 'past_visits': past_visits, 'next_visits': next_visits})
+    return render(request, 'doctor/patient-profile.html', {'user': user, 'profile': profile, 'past_visits': past_visits, 'next_visits': next_visits})
 
 
 @login_required(login_url='home.html')
@@ -98,8 +101,8 @@ def schedule(request):
 
 # endregion
 
-# region PATIENT
 
+# region PATIENT
 
 @login_required(login_url='home.html')
 def my_profile(request):
@@ -239,6 +242,66 @@ def get_booked_time(visits):
     return booked_time, weekend
 
 
+@login_required(login_url='home.html')
+def doctor_profile(request, id):
+    doctor = User.objects.get(id=id)
+    profile = Profile.objects.get(user=doctor)
+
+    my_visits = Visit.objects.filter(user=request.user, doctor=doctor,
+                                     date__gte=datetime.datetime.today()).order_by('-date', '-time')
+
+    return render(request, 'patient/doctor_profile.html', {'doctor': doctor, 'profile': profile, 'my_visits': my_visits})
+
+
+@login_required(login_url='home.html')
+def doctors(request):
+    # doctors = User.objects.filter(groups__name='Doctor_perm')
+    profiles = Profile.objects.filter(is_doctor=True)
+    doctors = []
+    for prof in profiles:
+        doctors.append(prof.user)
+    return render(request, 'patient/doctors.html', {'doctors': doctors, 'profiles': profiles})
+
+
+# endregion
+
+# region CHAT
+@login_required(login_url='home.html')
+def create_chat(request, id):
+    doctor = User.objects.get(id=id)
+    chat = Chat.objects.get(user=request.user, doctor=doctor)
+    if not chat:
+        Chat.objects.create(user=request.user, doctor=doctor)
+        chat = Chat.objects.get(user=request.user, doctor=doctor)
+        print(chat)
+    return redirect(f'/chat/{chat.id}')
+
+
+@login_required(login_url='home.html')
+def chat(request, id):
+    chat = Chat.objects.get(id=id)
+    if request.method == 'GET':
+        msgs = Message.objects.filter(chat=chat)
+        print(msgs)
+        return render(request, 'chat.html', {'messages': msgs})
+    if request.method == 'POST':
+        msg = request.POST.get('message')
+        if len(msg) > 1:
+            Message.objects.create(chat=chat, author=request.user, text=msg)
+        print(request.POST)
+        return redirect(f'/chat/{id}')
+
+
+@login_required(login_url='home.html')
+def chat_list(request):
+    chats = Chat.objects.filter(user=request.user)
+    if not chats:
+        chats = Chat.objects.filter(doctor=request.user)
+    return render(request, 'chat-list.html', {'chats': chats})
+
+# endregion
+
+
 WORKING_TIME = ['08:00', '08:30',
                 '09:00', '09:30',
                 '10:00', '10:30',
@@ -249,7 +312,10 @@ WORKING_TIME = ['08:00', '08:30',
                 '15:00', '15:30',
                 '16:00', '16:30',
                 '17:00', '17:30']
-# endregion
+
 
 # profil - pakiet?, recepty json, sms,
 # lekarz ustawia swoje godzinki + urlopy
+# wejście na profile lekarza + wystawienie opini z ocenką i komentarzem
+# powiadomienia że lekarz odpisał i o nowej opini na swój temat
+# podgląd ostatniej wiadomości w zakłądce 'chats'

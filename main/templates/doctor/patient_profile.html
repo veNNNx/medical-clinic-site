@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %} {{user.first_name}} {{user.last_name}} profile {% endblock %}
+
+{% block content %} 
+    <h1> {{user.first_name}} {{user.last_name}}</h1>
+    <p>E-mail: {{user.email}}</p>
+    <p>Tel: {{profile.tel}}</p>
+    <p>Pesel: {{profile.pesel}}</p>
+    <p>City: {{profile.city}}</p>
+    <p>Zip code: {{profile.zip_code}}</p>
+    <p>Street: {{profile.street}}</p>
+    <p>Address numer: {{profile.addr_number}}</p>
+    <p>User Id: {{profile.user_id}}</p>
+</br>
+    {% for v in visits%}
+    <p>{{v}}</p>
+    {%endfor%}
+</br>
+{%if next_visits %}
+    <h1>Incoming visits</h1>
+        {% for visit in next_visits%}
+            <div> 
+            {{visit.doctor.first_name}} {{visit.doctor.last_name}} {{visit.date}} {{visit.time}}
+            </div>
+    {%endfor%}
+{% endif %}
+
+{%if past_visits %}
+    <h1>Past visits</h1>
+        {% for visit in past_visits%}
+            <div> 
+            {{visit.doctor.first_name}} {{visit.doctor.last_name}} {{visit.date}} {{visit.time}}
+            </div>
+        {%endfor%}
+{% endif %}
+
+
+
+{% endblock %}

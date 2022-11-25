@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+
+{% block title %} Chats {% endblock %}
+
+{% block content %}
+
+{% for chat in chats %}
+<a href="/chat/{{chat.id}}">{{chat.doctor.first_name}} {{chat.doctor.last_name}}
+
+</a>
+{%endfor%}
+
+
+
+
+{% endblock %}

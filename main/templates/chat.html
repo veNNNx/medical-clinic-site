@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+
+{% block title %} Chat {% endblock %}
+
+{% block content %}
+
+<div>
+{% for msg in messages%}
+    {%if msg.author == user%}
+        <div align="right" style="background-color:rgb(89, 89, 210);">
+            <p>{{msg.author.first_name}} {{msg.author.last_name}}</p>
+            <p>{{msg.text}}</p>
+            <p>{{msg.date_created}}</p>
+    {% else %}
+        <div style="background-color:rgb(99, 143, 99);">
+            <p>{{msg.author.first_name}} {{msg.author.last_name}}</p>
+            <p>{{msg.text}}dasdasdasdasdasdasdas</p>
+            <p>{{msg.date_created}}</p>
+    {%endif%}    
+        </div>
+{%endfor%}
+</div>
+
+<form method='post'>
+    {% csrf_token %}
+    <input type="text" class="form-control" name="message" placeholder="Type message...">
+    <button type="'submit"> Send! </button>
+</form>
+
+
+
+
+{% endblock %}
