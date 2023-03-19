@@ -7,6 +7,7 @@ from django.contrib import messages
 from .forms import *
 import datetime
 import json
+
 # Create your views here.
 
 # region FOR ALL
@@ -36,6 +37,8 @@ def sign_up(request):
         form = RegisterForm()
 
     return render(request, 'registration/sign_up.html', {'form': form})
+
+
 # endregion
 
 # region DOCTOR
@@ -52,12 +55,20 @@ def patient_profile(request, id):
     user = User.objects.get(id=id)
     profile = Profile.objects.get(user=user)
 
-    next_visits = Visit.objects.filter(user=user,
-                                       date__gte=datetime.datetime.today()).order_by('-date', '-time')
-    past_visits = Visit.objects.filter(user=user,
-                                       date__lt=datetime.datetime.today()).order_by('-date', '-time')
+    next_visits = Visit.objects.filter(
+        user=user,
+        date__gte=datetime.datetime.today()).order_by('-date', '-time')
+    past_visits = Visit.objects.filter(
+        user=user,
+        date__lt=datetime.datetime.today()).order_by('-date', '-time')
 
-    return render(request, 'doctor/patient-profile.html', {'user': user, 'profile': profile, 'past_visits': past_visits, 'next_visits': next_visits})
+    return render(
+        request, 'doctor/patient-profile.html', {
+            'user': user,
+            'profile': profile,
+            'past_visits': past_visits,
+            'next_visits': next_visits
+        })
 
 
 @login_required(login_url='home.html')
@@ -90,19 +101,27 @@ def patients(request):
 def schedule(request):
     if request.method == 'POST':
         date = request.POST.get('date')
-        visits = Visit.objects.filter(
-            doctor=request.user, date=date).order_by('-time')
-        return render(request, 'doctor/schedule.html', {'date': date, 'visits': visits})
+        visits = Visit.objects.filter(doctor=request.user,
+                                      date=date).order_by('-time')
+        return render(request, 'doctor/schedule.html', {
+            'date': date,
+            'visits': visits
+        })
     else:
         date = datetime.date.today().strftime('%Y-%m-%d')
-        visits = Visit.objects.filter(
-            doctor=request.user, date=date).order_by('date')
-        return render(request, 'doctor/schedule.html', {'date': date, 'visits': visits, 'default': True})
+        visits = Visit.objects.filter(doctor=request.user,
+                                      date=date).order_by('date')
+        return render(request, 'doctor/schedule.html', {
+            'date': date,
+            'visits': visits,
+            'default': True
+        })
+
 
 # endregion
 
-
 # region PATIENT
+
 
 @login_required(login_url='home.html')
 def my_profile(request):
@@ -117,19 +136,19 @@ def my_profile(request):
         profile.tel = data.get('tel') if data.get('tel') != '' else profile.tel
 
         if profile.is_doctor:
-            profile.spec = data.get('spec') if data.get(
-                'spec') != '' else profile.spec
-            profile.desc = data.get('desc') if data.get(
-                'desc') != '' else profile.desc
+            profile.spec = data.get(
+                'spec') if data.get('spec') != '' else profile.spec
+            profile.desc = data.get(
+                'desc') if data.get('desc') != '' else profile.desc
         else:
-            profile.pesel = data.get('pesel') if data.get(
-                'pesel') != '' else profile.pesel
-            profile.city = data.get('city') if data.get(
-                'city') != '' else profile.city
-            profile.zip_code = data.get('zip_code') if data.get(
-                'zip_code') != '' else profile.zip_code
-            profile.street = data.get('street') if data.get(
-                'street') != '' else profile.street
+            profile.pesel = data.get(
+                'pesel') if data.get('pesel') != '' else profile.pesel
+            profile.city = data.get(
+                'city') if data.get('city') != '' else profile.city
+            profile.zip_code = data.get(
+                'zip_code') if data.get('zip_code') != '' else profile.zip_code
+            profile.street = data.get(
+                'street') if data.get('street') != '' else profile.street
             profile.addr_number = data.get('addr_number')
         profile.save()
         messages.success(request, 'Profile updated!')
@@ -139,14 +158,21 @@ def my_profile(request):
 
 @login_required(login_url='home.html')
 def my_visits(request):
-    next_visits = Visit.objects.filter(user=request.user,
-                                       date__gt=datetime.datetime.today()).order_by('-date', '-time')
-    today_visits = Visit.objects.filter(user=request.user,
-                                        date=datetime.datetime.today()).order_by('-time')
-    past_visits = Visit.objects.filter(user=request.user,
-                                       date__lt=datetime.datetime.today()).order_by('-date', '-time')
+    next_visits = Visit.objects.filter(
+        user=request.user,
+        date__gt=datetime.datetime.today()).order_by('-date', '-time')
+    today_visits = Visit.objects.filter(
+        user=request.user, date=datetime.datetime.today()).order_by('-time')
+    past_visits = Visit.objects.filter(
+        user=request.user,
+        date__lt=datetime.datetime.today()).order_by('-date', '-time')
 
-    return render(request, 'patient/my_visits.html', {'next_visits': next_visits, 'past_visits': past_visits, 'today_visits': today_visits})
+    return render(
+        request, 'patient/my_visits.html', {
+            'next_visits': next_visits,
+            'past_visits': past_visits,
+            'today_visits': today_visits
+        })
 
 
 @login_required(login_url='home.html')
@@ -168,7 +194,10 @@ def new_visit(request):
     doctors = []
     for prof in profiles:
         doctors.append(prof.user)
-    return render(request, 'patient/new_visit.html', {'doctors': doctors, 'profiles': profiles})
+    return render(request, 'patient/new_visit.html', {
+        'doctors': doctors,
+        'profiles': profiles
+    })
 
 
 @login_required(login_url='home.html')
@@ -201,24 +230,28 @@ def select_time(request, id):
             messages.success(request, 'Visit booked succesfullty!')
             return redirect('/my-visits')
     elif request.method == 'GET':
-        visits = Visit.objects.filter(
-            doctor=doctor, date__gte=datetime.datetime.today())
+        visits = Visit.objects.filter(doctor=doctor,
+                                      date__gte=datetime.datetime.today())
 
         booked_time, weekend = get_booked_time(visits)
 
         working_time = WORKING_TIME.copy()
 
-        title = [(datetime.datetime.today() + datetime.timedelta(days=i)
-                  ).strftime('%A %Y-%m-%d') for i in range(7)]
-        date = [(datetime.datetime.today() + datetime.timedelta(days=i)
-                 ).strftime('%Y-%m-%d') for i in range(7)]
+        title = [(datetime.datetime.today() +
+                  datetime.timedelta(days=i)).strftime('%A %Y-%m-%d')
+                 for i in range(7)]
+        date = [(datetime.datetime.today() +
+                 datetime.timedelta(days=i)).strftime('%Y-%m-%d')
+                for i in range(7)]
 
-        context = {'visits': visits,
-                   'working_time': working_time,
-                   'title': title,
-                   'date': date,
-                   'booked_time': booked_time,
-                   'weekend': weekend}
+        context = {
+            'visits': visits,
+            'working_time': working_time,
+            'title': title,
+            'date': date,
+            'booked_time': booked_time,
+            'weekend': weekend
+        }
 
         return render(request, 'patient/select_time.html', context)
     return redirect('/new-visit')
@@ -231,8 +264,8 @@ def get_booked_time(visits):
     for vis in visits:
         vis.time = vis.time.strftime('%H:%M')
         booked_time.append(f'{vis.date}{vis.time}')
-    days = [(datetime.datetime.today() + datetime.timedelta(days=i)
-             )for i in range(7)]
+    days = [(datetime.datetime.today() + datetime.timedelta(days=i))
+            for i in range(7)]
     for day in days:
         if day.weekday() > 4:
             weekday.append(day.strftime('%Y-%m-%d'))
@@ -247,10 +280,15 @@ def doctor_profile(request, id):
     doctor = User.objects.get(id=id)
     profile = Profile.objects.get(user=doctor)
 
-    my_visits = Visit.objects.filter(user=request.user, doctor=doctor,
-                                     date__gte=datetime.datetime.today()).order_by('-date', '-time')
+    my_visits = Visit.objects.filter(
+        user=request.user, doctor=doctor,
+        date__gte=datetime.datetime.today()).order_by('-date', '-time')
 
-    return render(request, 'patient/doctor_profile.html', {'doctor': doctor, 'profile': profile, 'my_visits': my_visits})
+    return render(request, 'patient/doctor_profile.html', {
+        'doctor': doctor,
+        'profile': profile,
+        'my_visits': my_visits
+    })
 
 
 @login_required(login_url='home.html')
@@ -260,20 +298,25 @@ def doctors(request):
     doctors = []
     for prof in profiles:
         doctors.append(prof.user)
-    return render(request, 'patient/doctors.html', {'doctors': doctors, 'profiles': profiles})
+    return render(request, 'patient/doctors.html', {
+        'doctors': doctors,
+        'profiles': profiles
+    })
 
 
 # endregion
+
 
 # region CHAT
 @login_required(login_url='home.html')
 def create_chat(request, id):
     doctor = User.objects.get(id=id)
-    chat = Chat.objects.get(user=request.user, doctor=doctor)
-    if not chat:
+    try:
+        chat = Chat.objects.get(user=request.user, doctor=doctor)
+    except Exception as e:
+        print(e)
         Chat.objects.create(user=request.user, doctor=doctor)
         chat = Chat.objects.get(user=request.user, doctor=doctor)
-        print(chat)
     return redirect(f'/chat/{chat.id}')
 
 
@@ -299,20 +342,14 @@ def chat_list(request):
         chats = Chat.objects.filter(doctor=request.user)
     return render(request, 'chat-list.html', {'chats': chats})
 
+
 # endregion
 
-
-WORKING_TIME = ['08:00', '08:30',
-                '09:00', '09:30',
-                '10:00', '10:30',
-                '11:00', '11:30',
-                '12:00', '12:30',
-                '13:00', '13:30',
-                '14:00', '14:30',
-                '15:00', '15:30',
-                '16:00', '16:30',
-                '17:00', '17:30']
-
+WORKING_TIME = [
+    '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+    '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30',
+    '16:00', '16:30', '17:00', '17:30'
+]
 
 # profil - pakiet?, recepty json, sms,
 # lekarz ustawia swoje godzinki + urlopy
