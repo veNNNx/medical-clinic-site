@@ -11,24 +11,41 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ["username", "email",  'first_name',
-                  'last_name',  "password1", "password2"]
+        fields = [
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "password1",
+            "password2",
+        ]
 
 
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'text']
+        fields = ["title", "text"]
 
 
 class VisitForm(forms.ModelForm):
     class Meta:
         model = Visit
-        fields = ['doctor', 'user', 'date', 'time']
+        fields = ["doctor", "user", "date", "time"]
 
 
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['user', 'is_doctor', 'img', 'tel', 'desc', 'spec',
-                  'pesel', 'city', 'zip_code', 'street', 'addr_number']
+        fields = [
+            "user",
+            "is_doctor",
+            "img",
+            "tel",
+            "desc",
+            "spec",
+            "pesel",
+            "city",
+            "zip_code",
+            "street",
+            "addr_number",
+        ]
